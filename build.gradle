@@ -1,0 +1,86 @@
+/*buildscript {
+	ext {
+		springBootVersion = '2.0.0.RELEASE'
+		gradleArtifactoryVersion = '4.7.1'
+	}
+	repositories {
+		maven {
+			url "http://artifacts.twt.intern/maven"
+		}
+		maven {
+			url 'http://vaadin.com/nexus/content/repositories/vaadin-addons/'
+		}
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("org.jfrog.buildinfo:build-info-extractor-gradle:${gradleArtifactoryVersion}")
+	}
+}*/
+
+plugins {
+	id 'org.springframework.boot' version '2.0.0.RELEASE'
+	//id 'com.jfrog.artifactory' version '4.7.1'
+}
+
+allprojects {
+	//apply plugin: "com.jfrog.artifactory"
+    //apply plugin: "maven"
+    apply plugin: "java"
+    apply plugin: "idea"
+    apply plugin: "war"
+    apply plugin: "org.springframework.boot"
+    apply plugin: 'io.spring.dependency-management'
+}
+
+group = 'com.example'
+version = '0.0.9'
+sourceCompatibility = 1.8
+
+repositories {
+	maven {
+		url "${artifactory_contextUrl}/maven"
+        credentials {
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+        }
+	}
+    maven {
+        url 'http://vaadin.com/nexus/content/repositories/vaadin-addons/'
+    }
+}
+
+ext {
+	vaadinVersion = '8.3.3'
+}
+
+dependencies {
+	compile("com.vaadin:vaadin-spring-boot-starter")
+    compile("com.vaadin:vaadin-themes")
+    compile("com.vaadin:vaadin-server")
+
+	// JPA Data (We are going to use Repositories, Entities, Hibernate, etc...)
+	//compile("org.springframework.boot:spring-boot-starter-data-jpa")
+
+	compile("org.json:json:20180130")
+	//compile("com.googlecode.json-simple:json-simple:1.1.1")
+	compile("org.apache.httpcomponents:httpclient:4.5.5")
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "com.vaadin:vaadin-bom:${vaadinVersion}"
+	}
+}
+/*
+artifactory {
+	contextUrl = "http://artifacts.twt.intern/"
+	resolve {
+		repository {
+			repoKey = "maven"
+            username = "${artifactory_user}"
+            password = "${artifactory_password}"
+			maven = true
+		}
+	}
+}*/
